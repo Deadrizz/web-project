@@ -1,0 +1,11 @@
+import requests
+API_KEY = f'1fbecf628ab45bf81e57c3a8903bbed1'
+def get_name_city(name_city:str):
+    return name_city.capitalize().strip()
+city = get_name_city("kyiv")
+url = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric")
+data = url.json()
+def get_temperature(data:dict)->float:
+    return data['main']['temp']
+def get_weather_description(data:dict)->str:
+    return data['weather'][0]['description']
