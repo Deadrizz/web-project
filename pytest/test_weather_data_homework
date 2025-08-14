@@ -1,0 +1,11 @@
+import pytest
+from weather_data_homework import get_name_city,get_temperature,get_weather_description
+def test_get_name_city():
+    assert get_name_city("kyiv") == "Kyiv"
+    assert get_name_city("   London    ") == "London"
+def test_get_temperature():
+    fake_data = {"main":{"temp":18.7}}
+    assert get_temperature(fake_data) == 18.7
+def test_get_weather_description():
+    fake_data = {"weather":{"description":"rainy"}}
+    assert get_weather_description(fake_data) == "rainy"
