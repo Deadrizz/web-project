@@ -1,5 +1,5 @@
 import requests
-API_KEY = f'1fbecf628ab45bf81e57c3a8903bbed1'
+API_KEY = f'YOUR API TOKEN'
 def get_name_city(name_city:str):
     return name_city.capitalize().strip()
 city = get_name_city("kyiv")
