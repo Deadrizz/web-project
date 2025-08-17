@@ -1,0 +1,83 @@
+import sqlite3
+def get_db_connection():
+    return sqlite3.connect("socialclub")
+def set_up_database():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute("""
+        create table if not exists users(
+        id INTEGER primary key,
+        username TEXT not null unique,
+        password TEXT not null,
+        email TEXT not null unique
+        )
+        """)
+    except sqlite3.OperationalError as e:
+        print(f"Error to create data base: {e}")
+    finally:
+        connection.close()
+current_user = None
+class User:
+    def __init__(self,username,password,email):
+        self.username = username 
+        self.password = password
+        self.email = email
+    def register_user(self):
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute("""insert into users(username,password,email) values (?,?,?)""", (self.username,self.password,self.email))
+            connection.commit()
+            print(f"User: {self.username} successfully  registered")
+        except sqlite3.IntegrityError as e:
+            print(f"ERROR:{e}. User:{self.username} already exist")
+        finally:
+            connection.close()
+    def login_user(self):
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        global current_user
+        cursor.execute("""select id from users where username = (?) and password = (?)""", (self.username,self.password))
+        user = cursor.fetchone()
+        connection.close()
+        if user:
+            current_user = user[0]
+            print(f"Hello, {self.username}!")
+            return True
+        else:
+            print(f"Wrong username or password")
+            return False
+def main_menu():
+    while True:
+        print("\n=== Social Club ===")
+        print("1 - Зареєструватися")
+        print("2 - Увійти")
+        print("3 - Вийти")
+
+        choice = input("Ваш вибір: ")
+
+        if choice == "1":
+            username = input("Enter your username: ")
+            password = input("Enter your password: ")
+            email = input("Enter your email: ")
+            user = User(username, password, email)
+            user.register_user()
+
+        elif choice == "2":
+            username = input("Enter your username: ")
+            password = input("Enter your password: ")
+            user = User(username, password,None)
+            user.login_user()
+
+        elif choice == "3":
+            print("Вихід із програми...")
+            break
+
+        else:
+            print("Невірний вибір! Спробуйте ще раз.")
+
+
+if __name__ == "__main__":
+    set_up_database()
+    main_menu()
